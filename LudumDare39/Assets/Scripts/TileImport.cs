@@ -20,6 +20,8 @@ public class TileImport : MonoBehaviour {
     private Sprite[] spriteTiles;
 
     private const int PLAYERSPAWN = 964;
+    private const int WEED_ONE = 592;
+    private const int WEED_TWO = 649;
 
     private void Awake()
     {
@@ -163,8 +165,6 @@ public class TileImport : MonoBehaviour {
                     else if (layerInfo.Attributes["name"].Value == "Doors/windows/roof")
                     {
 
-
-
                     }
                     else if(layerInfo.Attributes["name"].Value == "Objects")
                     {
@@ -173,12 +173,19 @@ public class TileImport : MonoBehaviour {
                             case PLAYERSPAWN:
                                 Debug.Log("Player found at " + spriteValue);
                                 break;
+                            case WEED_ONE:
+                            case WEED_TWO:
+                                BoxCollider2D boxCol = tempSprite.AddComponent<BoxCollider2D>();
+                                boxCol.isTrigger = true;
+                                tempSprite.tag = "weed";
+                                break;
                             default:
                                 tempSprite.AddComponent<BoxCollider2D>();
                                 break;
 
                         }
                     }
+                    tempSprite.isStatic = true;
                     #region old
                     //else if (layerInfo.Attributes["name"].Value == "Terrain")
                     //{
@@ -228,7 +235,7 @@ public class TileImport : MonoBehaviour {
                     //        Debug.Log("Unknown Entity placed in map(no info loaded for sprite index: " + (spriteValue - 1) + ").");
                     //        break;
                     //}
-#endregion
+                    #endregion
                 }
                 horizontalIndex++;
                 if (horizontalIndex % layerWidth == 0)
