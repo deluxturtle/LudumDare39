@@ -9,11 +9,27 @@ using UnityEngine;
 public class PlayerHealth : MonoBehaviour {
 
     public int health = 6;
+    public int maxHealth = 6;
 
+    private UIHearts heartUI;
+
+    private void Start()
+    {
+        heartUI = GameObject.FindObjectOfType<UIHearts>();
+        if (heartUI == null)
+        {
+            Debug.LogWarning("UI for hearts couldn't be found. please add the GUI to scene.");
+        }
+        heartUI.InitializeHearts(maxHealth, health);
+    }
 
     public void Hurt(int dmg)
     {
         health -= dmg;
+
+        //Update gui
+        heartUI.DeductHealth(dmg);
+
         if(health <= 0)
         {
             Debug.Log("Player died.");

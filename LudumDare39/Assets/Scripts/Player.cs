@@ -24,6 +24,7 @@ public class Player : MonoBehaviour {
     private FacingDirection facing = FacingDirection.DOWN;
     private Animator playerAnimator;
     private Animator swordAnimator;
+    private PlayerHealth health;
     private float horizontal = 0;
     private float vertical = 0;
     private bool lockDirection = false;
@@ -32,6 +33,7 @@ public class Player : MonoBehaviour {
     {
         playerAnimator = sprite.GetComponent<Animator>();
         swordAnimator = sword.GetComponent<Animator>();
+        health = GetComponent<PlayerHealth>();
     }
 
     // Update is called once per frame
@@ -119,11 +121,12 @@ public class Player : MonoBehaviour {
         lockDirection = false;
     }
 
-    private void OnTriggerEnter(Collider other)
+    void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.tag == "Enemy")
+        Debug.Log(other);
+        if (other.tag == "Enemy")
         {
-            
+            health.Hurt(other.GetComponent<Enemy>().attackDamage);
         }
     }
 }
