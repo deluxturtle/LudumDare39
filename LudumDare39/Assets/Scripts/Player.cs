@@ -10,14 +10,6 @@ enum FacingDirection
     RIGHT
 }
 
-enum FirstKeyPressed
-{
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT,
-    NONE
-}
 
 /// <summary>
 /// Author: Andrew Seba
@@ -34,6 +26,7 @@ public class Player : MonoBehaviour {
     private Animator swordAnimator;
     private float horizontal = 0;
     private float vertical = 0;
+    private bool lockDirection = false;
 
     private void Start()
     {
@@ -76,23 +69,26 @@ public class Player : MonoBehaviour {
         if (Input.GetKey("right") || horizontal > 0 && !Input.GetKey("left"))
         {
             horizontal = 1;
-            facing = FacingDirection.RIGHT;
+            if(!lockDirection)
+                facing = FacingDirection.RIGHT;
         }
         if (Input.GetKey("left") || horizontal < 0 && !Input.GetKey("right"))
         {
             horizontal = -1;
-            facing = FacingDirection.LEFT;
+            if (!lockDirection)
+                facing = FacingDirection.LEFT;
         }
         if (Input.GetKey("up") || vertical > 0 && !Input.GetKey("down"))
         {
             vertical = 1;
-            facing = FacingDirection.UP;
+            if (!lockDirection)
+                facing = FacingDirection.UP;
         }
         if (Input.GetKey("down") || vertical < 0 && !Input.GetKey("up"))
         {
             vertical = -1;
-
-            facing = FacingDirection.DOWN;
+            if (!lockDirection)
+                facing = FacingDirection.DOWN;
         }
 
         //Button UP
@@ -113,12 +109,21 @@ public class Player : MonoBehaviour {
     {
         swordAnimator.SetBool("attack", true);
         sword.GetComponent<BoxCollider2D>().enabled = true;
+        lockDirection = true;
     }
 
-    private void ResetAttack()
+    public void ResetAttack()
     {
         swordAnimator.SetBool("attack", false);
         sword.GetComponent<BoxCollider2D>().enabled = false;
+        lockDirection = false;
+    }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.tag == "Enemy")
+        {
+            
+        }
     }
 }

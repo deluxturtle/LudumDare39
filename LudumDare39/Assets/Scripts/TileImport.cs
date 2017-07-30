@@ -69,8 +69,8 @@ public class TileImport : MonoBehaviour {
         float tileHeight = (float.Parse(tilesetInfo.Attributes["tileheight"].Value) / (float)16);
 
         //Generate Collision grid for mouse input.
-        int width = int.Parse(xmlDoc.SelectSingleNode("map").Attributes["width"].Value);
-        int height = int.Parse(xmlDoc.SelectSingleNode("map").Attributes["height"].Value);
+        //int width = int.Parse(xmlDoc.SelectSingleNode("map").Attributes["width"].Value);
+        //int height = int.Parse(xmlDoc.SelectSingleNode("map").Attributes["height"].Value);
 
         //Tile[,] allTiles = new Tile[width, height];
 
