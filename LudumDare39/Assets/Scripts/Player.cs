@@ -20,6 +20,8 @@ public class Player : MonoBehaviour {
     public GameObject sprite;
     public GameObject sword;
     public float speed = 2f;
+    public float hurtAgainDelay = 1f; //Seconds
+    public float hitForce = 100;
 
     private FacingDirection facing = FacingDirection.DOWN;
     private Animator playerAnimator;
@@ -28,6 +30,7 @@ public class Player : MonoBehaviour {
     private float horizontal = 0;
     private float vertical = 0;
     private bool lockDirection = false;
+    private bool canGetHurt = true;
 
     private void Start()
     {
@@ -113,7 +116,7 @@ public class Player : MonoBehaviour {
         sword.GetComponent<BoxCollider2D>().enabled = true;
         lockDirection = true;
     }
-
+    
     public void ResetAttack()
     {
         swordAnimator.SetBool("attack", false);
@@ -123,10 +126,23 @@ public class Player : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log(other);
         if (other.tag == "Enemy")
         {
-            health.Hurt(other.GetComponent<Enemy>().attackDamage);
+            if (canGetHurt)
+            {
+                health.Hurt(other.GetComponent<Enemy>().attackDamage);
+                canGetHurt = false;
+                Invoke("ResetHurt", hurtAgainDelay);
+                playerAnimator.SetTrigger("Hurt");
+                Vector2 direction = transform.position - other.transform.position;
+                direction = direction.normalized;
+                GetComponent<Rigidbody2D>().AddForce(direction * hitForce);
+            }
         }
+    }
+
+    void ResetHurt()
+    {
+        canGetHurt = true;
     }
 }

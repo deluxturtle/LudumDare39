@@ -180,7 +180,7 @@ public class TileImport : MonoBehaviour {
                                 tempSprite.tag = "weed";
                                 break;
                             default:
-                                tempSprite.AddComponent<BoxCollider2D>();
+                                BoxCollider2D defaultBoxCol = tempSprite.AddComponent<BoxCollider2D>();
                                 break;
 
                         }

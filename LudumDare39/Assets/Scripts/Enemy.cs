@@ -33,7 +33,6 @@ public class Enemy : MonoBehaviour {
 
     public void Hurt(int damage)
     {
-        Debug.Log("Got Hurt");
         health -= damage;
         if(health <= 0)
         {
