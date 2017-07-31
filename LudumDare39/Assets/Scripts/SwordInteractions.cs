@@ -22,6 +22,7 @@ public class SwordInteractions : MonoBehaviour {
             Enemy tempEnemy = other.GetComponent<Enemy>();
             if(tempEnemy != null)
             {
+                other.GetComponent<Rigidbody2D>().AddForce((other.transform.position - transform.position).normalized * 500);
                 tempEnemy.Hurt(1);
                 player.ResetAttack();
             }

@@ -23,10 +23,14 @@ public class Player : MonoBehaviour {
     public float hurtAgainDelay = 1f; //Seconds
     public float hitForce = 100;
 
+    [Header("Audio Settings")]
+    public AudioClip hurtClip;
+
     private FacingDirection facing = FacingDirection.DOWN;
     private Animator playerAnimator;
     private Animator swordAnimator;
     private PlayerHealth health;
+    private AudioSource audioSource;
     private float horizontal = 0;
     private float vertical = 0;
     private bool lockDirection = false;
@@ -37,6 +41,7 @@ public class Player : MonoBehaviour {
         playerAnimator = sprite.GetComponent<Animator>();
         swordAnimator = sword.GetComponent<Animator>();
         health = GetComponent<PlayerHealth>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -130,6 +135,8 @@ public class Player : MonoBehaviour {
         {
             if (canGetHurt)
             {
+                audioSource.clip = hurtClip;
+                audioSource.Play();
                 health.Hurt(other.GetComponent<Enemy>().attackDamage);
                 canGetHurt = false;
                 Invoke("ResetHurt", hurtAgainDelay);
