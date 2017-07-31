@@ -107,6 +107,8 @@ public class Player : MonoBehaviour {
         //Button Down
         if (Input.GetButtonDown("Fire1"))
             Attack();
+        if(Input.GetButtonUp("Fire1"))
+            lockDirection = false;
 
     }
 
@@ -126,7 +128,6 @@ public class Player : MonoBehaviour {
     {
         swordAnimator.SetBool("attack", false);
         sword.GetComponent<BoxCollider2D>().enabled = false;
-        lockDirection = false;
     }
 
     void OnTriggerEnter2D(Collider2D other)

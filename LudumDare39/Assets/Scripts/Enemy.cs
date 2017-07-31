@@ -14,8 +14,10 @@ public enum EnemyState
 /// </summary>
 public class Enemy : MonoBehaviour {
 
+    public float moveSpeed = 2;
     public int attackDamage = 1;
     public float activationRange = 10f;
+    public float agroRange = 5f;
     public float hurtResetTime = 0.5f;
     public AudioClip hurt;
 
@@ -94,6 +96,21 @@ public class Enemy : MonoBehaviour {
         Debug.Log("Wandering");
         while (true)
         {
+            if(Vector2.Distance(player.position, transform.position) < agroRange)
+            {
+                StartCoroutine("Agro");
+                break;
+            }
+            yield return null;
+        }
+    }
+
+    IEnumerator Agro()
+    {
+        while (true)
+        {
+            if(canGetHurt && player.GetComponent<PlayerHealth>().health > 0)
+                transform.Translate((player.position - transform.position).normalized * Time.deltaTime * moveSpeed);
             yield return null;
         }
     }

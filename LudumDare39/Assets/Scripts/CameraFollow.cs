@@ -5,12 +5,6 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour {
 
     public GameObject targetFollow;
-
-	// Use this for initialization
-	void Start ()
-    {
-		
-	}
 	
 	// Update is called once per frame
 	void LateUpdate ()

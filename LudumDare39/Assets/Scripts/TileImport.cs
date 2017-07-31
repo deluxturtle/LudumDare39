@@ -15,39 +15,41 @@ public class TileImport : MonoBehaviour {
     public int layerWidth;
     [HideInInspector]
     public int layerHeight;
+    public GameObject loadingPanel;
+    [Header("Object Prefabs")]
+    public GameObject mechPrefab;
+    public GameObject basicEnemyPrefab;
 
     GameObject collisionParent;
     private Sprite[] spriteTiles;
+    private List<GameObject> interactables = new List<GameObject>();
 
+    //Sprite Index for objects
     private const int PLAYERSPAWN = 964;
     private const int WEED_ONE = 592;
     private const int WEED_TWO = 649;
+    private const int MECHSPAWN_ONE = 56;
+    private const int MECHSPAWN_TWO = 113;
+    private const int ENEMYBASIC = 1352;
 
     private void Awake()
     {
-        //Try loading asset from folder
-        //Texture2D dynamicAssetTexture = null;
-        //byte[] imageBytes;
-        //string imagePath = Application.dataPath + "/";
-        //foreach(string file in Directory.GetFiles(imagePath))
-        //{
-        //    Debug.Log(Application.dataPath + "/" + file);
-
-        //    if (file.EndsWith(".png"))
-        //    {
-        //        imageBytes = File.ReadAllBytes(Application.dataPath + "/" + file);
-        //        Debug.Log("SUCCESS!");
-        //        System.Drawing.Image img
-        //        dynamicAssetTexture = new Texture2D(Syste)
-        //    }
-        //}
-
+        loadingPanel.SetActive(true);
+    }
+    private void Start()
+    {
         collisionParent = new GameObject("CollisionGridLayer");
+        LoadLevel();
+    }
+
+    public void LoadLevel()
+    {
         StartCoroutine("LoadMap");
     }
 
     IEnumerator LoadMap()
     {
+        yield return new WaitForEndOfFrame();
         try
         {
             spriteTiles = Resources.LoadAll<Sprite>("roguelikeSheet");
@@ -68,48 +70,6 @@ public class TileImport : MonoBehaviour {
         float tileWidth = (float.Parse(tilesetInfo.Attributes["tilewidth"].Value) / (float)16);
         float tileHeight = (float.Parse(tilesetInfo.Attributes["tileheight"].Value) / (float)16);
 
-        //Generate Collision grid for mouse input.
-        //int width = int.Parse(xmlDoc.SelectSingleNode("map").Attributes["width"].Value);
-        //int height = int.Parse(xmlDoc.SelectSingleNode("map").Attributes["height"].Value);
-
-        //Tile[,] allTiles = new Tile[width, height];
-
-
-
-        //for (int i = 0; i < height; i++)
-        //{
-        //    for (int j = 0; j < width; j++)
-        //    {
-        //        GameObject tempSprite = new GameObject("gid(" + i + "," + j + ")");
-        //        tempSprite.AddComponent<BoxCollider2D>();
-        //        //set position
-        //        tempSprite.transform.position = new Vector3((tileWidth * i), (tileHeight * j));
-        //        tempSprite.tag = "Tile";
-        //        tempSprite.transform.parent = collisionParent.transform;
-        //    }
-        //}
-
-        //Build Basic Connections
-        //foreach (Tile tile in allTiles)
-        //{
-        //    //Left
-        //    if (tile.x - 1 >= 0)
-        //    {
-        //        tile.Connections.Add(new ScriptConnection(tile.gameObject, allTiles[tile.x - 1, tile.y].gameObject, 1));
-        //    }
-        //    if (tile.x + 1 < width)
-        //    {
-        //        tile.Connections.Add(new ScriptConnection(tile.gameObject, allTiles[tile.x + 1, tile.y].gameObject, 1));
-        //    }
-        //    if (tile.y - 1 >= 0)
-        //    {
-        //        tile.Connections.Add(new ScriptConnection(tile.gameObject, allTiles[tile.x, tile.y - 1].gameObject, 1));
-        //    }
-        //    if (tile.y + 1 < height)
-        //    {
-        //        tile.Connections.Add(new ScriptConnection(tile.gameObject, allTiles[tile.x, tile.y + 1].gameObject, 1));
-        //    }
-        //}
 
 
 
@@ -156,7 +116,7 @@ public class TileImport : MonoBehaviour {
                     }
                     tempSprite.transform.parent = GameObject.Find(layerInfo.Attributes["name"].Value + "Layer").transform;
                     tempSprite.tag = "Tile";
-
+                    tempSprite.isStatic = true;
 
                     if (layerInfo.Attributes["name"].Value == "Roof object")
                     {
@@ -172,6 +132,8 @@ public class TileImport : MonoBehaviour {
                         {
                             case PLAYERSPAWN:
                                 Debug.Log("Player found at " + spriteValue);
+                                GameObject.FindGameObjectWithTag("Player").transform.position = tempSprite.transform.position;
+                                Destroy(tempSprite);
                                 break;
                             case WEED_ONE:
                             case WEED_TWO:
@@ -179,13 +141,25 @@ public class TileImport : MonoBehaviour {
                                 boxCol.isTrigger = true;
                                 tempSprite.tag = "weed";
                                 break;
+                            case MECHSPAWN_ONE://Needed two sprites to fit mech so just delete the extra one.
+                                Destroy(tempSprite);
+                                break;
+                            case MECHSPAWN_TWO://Spawns mech on this sprite
+                                GameObject tempMech = Instantiate(mechPrefab, tempSprite.transform.position, Quaternion.identity);
+                                interactables.Add(tempMech);
+                                Destroy(tempSprite);
+                                break;
+                            case ENEMYBASIC:
+                                Instantiate(basicEnemyPrefab, tempSprite.transform.position, Quaternion.identity);
+                                Destroy(tempSprite);
+                                break;
                             default:
                                 BoxCollider2D defaultBoxCol = tempSprite.AddComponent<BoxCollider2D>();
                                 break;
 
                         }
                     }
-                    tempSprite.isStatic = true;
+                    
                     #region old
                     //else if (layerInfo.Attributes["name"].Value == "Terrain")
                     //{
@@ -245,56 +219,14 @@ public class TileImport : MonoBehaviour {
                     //reset our horizontal location
                     horizontalIndex = 0;
                 }
+                
             }
 
         }//End of placing sprites
-        //rebuild costs in the connections
+
+        loadingPanel.SetActive(false);
+        GameObject.FindObjectOfType<PlayerInteraction>().SetInteractables(interactables);
 
         yield break;
     }
-
-    //void FindParent(Tile tile)
-    //{
-    //    foreach (Transform tilObj in collisionParent.transform)
-    //    {
-    //        if (tilObj.GetComponent<Tile>().x == tile.x && tilObj.GetComponent<Tile>().y == tile.y)
-    //        {
-    //            Tile tileScript = tilObj.GetComponent<Tile>();
-    //            if (tile is Human)
-    //            {
-    //                Human tempHuman = (Human)tile;
-    //                tempHuman.tileOccuping = tileScript;
-    //                tileScript.occupiedBy = tempHuman;
-    //            }
-    //            else if (tile is Terrain)
-    //            {
-    //                Terrain tempTerrain = (Terrain)tile;
-    //                int terrainCost = 0;
-    //                switch (tempTerrain.terrainType)
-    //                {
-    //                    case TerrainType.Forest:
-    //                        terrainCost = 2;
-    //                        break;
-    //                    default:
-    //                        terrainCost = 0;
-    //                        break;
-    //                }
-    //                foreach (ScriptConnection conn in tileScript.Connections)
-    //                {
-    //                    Tile surroundingForest = conn.goingTo.GetComponent<Tile>();
-
-    //                    foreach (ScriptConnection goingToForest in surroundingForest.Connections)
-    //                    {
-    //                        if (goingToForest.goingTo == tileScript.gameObject)
-    //                        {
-    //                            goingToForest.cost = terrainCost;
-    //                            break;
-    //                        }
-    //                    }
-    //                }
-
-    //            }
-    //        }
-    //    }
-    //}
 }
