@@ -13,7 +13,8 @@ public class PlayerInteraction : MonoBehaviour {
     public GameObject messege;
 
     private List<GameObject> interactables = new List<GameObject>();
-    private GameObject previousMech = null;
+    private GameObject currentMech = null;
+    private GameObject closestInteractible = null;
 
     //Player Scripts
     private Player playerScript;
@@ -28,10 +29,14 @@ public class PlayerInteraction : MonoBehaviour {
         playerHealth = GetComponent<PlayerHealth>();
         playerRigidBody = GetComponent<Rigidbody2D>();
         playerCollider = GetComponent<Collider2D>();
-        playerRend = GetComponent<SpriteRenderer>();
+        playerRend = GetComponentInChildren<SpriteRenderer>();
         
     }
 
+    /// <summary>
+    /// Sets the interactable list for the player.
+    /// </summary>
+    /// <param name="pInteracts">List of objects to be interacted with player.</param>
     public void SetInteractables(List<GameObject> pInteracts)
     {
         interactables = pInteracts;
@@ -40,54 +45,79 @@ public class PlayerInteraction : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
+        FindInteractables();
 
-        if(interactables.Count > 0)
+        if (Input.GetButtonDown("Fire3"))
         {
-            GameObject closestInteractible = null;
-            if (closestInteractible != null && Vector2.Distance(closestInteractible.transform.position, transform.position) > messegeRange)
+            if (currentMech)
             {
-                closestInteractible = null;
+                ExitMech();
             }
-            foreach (GameObject interactable in interactables)
+            else
             {
-                if (Vector2.Distance(interactable.transform.position, transform.position) < messegeRange)
-                {
-                    closestInteractible = interactable;
-                }
+                HandleInteractions();
             }
+        }
+    }
 
+    void FindInteractables()
+    {
+        
+        if (closestInteractible != null && Vector2.Distance(closestInteractible.transform.position, transform.position) > messegeRange)
+        {
+            closestInteractible = null;
+        }
+        foreach (GameObject interactable in interactables)
+        {
+            if (Vector2.Distance(interactable.transform.position, transform.position) < messegeRange)
+            {
+                closestInteractible = interactable;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Interactables between player are handled here.
+    /// </summary>
+    void HandleInteractions()
+    {
+        if (interactables.Count > 0)
+        {
+            //If something to interact with
             if (closestInteractible != null)
             {
                 string interactTag = closestInteractible.tag;
-
-                if (Input.GetButtonDown("Jump"))
+                switch (interactTag)
                 {
-                    switch (interactTag)
-                    {
-                        case "Mech":
+                    case "Mech":
+                        if (!currentMech)
+                        {
                             EnterMech(closestInteractible);
-                            previousMech = closestInteractible;
+                            currentMech = closestInteractible;
                             interactables.Remove(closestInteractible);
                             closestInteractible = null;
-                            break;
-                    }
+                        }
+                        break;
                 }
             }
         }
-
     }
 
     void EnterMech(GameObject mech)
     {
-        Debug.Log("Getting in mech.");
         EnablePlayer(false);
         transform.parent = mech.transform;
+        transform.position = mech.transform.position;
+        mech.GetComponent<MechController>().enabled = true;
     }
 
     void ExitMech()
     {
-        interactables.Add(previousMech);
-        previousMech = null;
+        currentMech.GetComponent<MechController>().enabled = false;
+        interactables.Add(currentMech);
+        EnablePlayer(true);
+        currentMech = null;
+
     }
 
     void EnablePlayer(bool checkBox)

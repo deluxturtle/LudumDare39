@@ -1,13 +1,13 @@
 fileFormatVersion: 2
-guid: fae0da025d2f5fb4aadda629fd8978b1
-timeCreated: 1501527166
+guid: 8b5c74db9806ad14084e970e060cceb0
+timeCreated: 1501531886
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: MechRight
-    21300002: MechFront
-    21300004: MechBack
-    21300006: MechLeft
+    21300000: rightArm_0
+    21300002: rightArm_1
+    21300004: rightArm_2
+    21300006: rightArm_3
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -90,54 +90,54 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: MechRight
+      name: rightArm_0
       rect:
         serializedVersion: 2
-        x: 2
-        y: 0
-        width: 30
-        height: 32
+        x: 3
+        y: 8
+        width: 21
+        height: 10
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: MechFront
+      name: rightArm_1
       rect:
         serializedVersion: 2
         x: 32
-        y: 0
-        width: 32
-        height: 32
+        y: 8
+        width: 10
+        height: 10
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: MechBack
+      name: rightArm_2
       rect:
         serializedVersion: 2
-        x: 64
-        y: 0
-        width: 32
-        height: 32
+        x: 86
+        y: 8
+        width: 10
+        height: 10
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: MechLeft
+      name: rightArm_3
       rect:
         serializedVersion: 2
         x: 96
-        y: 0
-        width: 30
-        height: 32
+        y: 8
+        width: 21
+        height: 10
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0

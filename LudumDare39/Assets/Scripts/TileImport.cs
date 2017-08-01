@@ -31,6 +31,7 @@ public class TileImport : MonoBehaviour {
     private const int MECHSPAWN_ONE = 56;
     private const int MECHSPAWN_TWO = 113;
     private const int ENEMYBASIC = 1352;
+    private const int OBJECTIVE = 402;
 
     private void Awake()
     {
@@ -131,7 +132,6 @@ public class TileImport : MonoBehaviour {
                         switch (spriteValue - 1)
                         {
                             case PLAYERSPAWN:
-                                Debug.Log("Player found at " + spriteValue);
                                 GameObject.FindGameObjectWithTag("Player").transform.position = tempSprite.transform.position;
                                 Destroy(tempSprite);
                                 break;
@@ -152,6 +152,12 @@ public class TileImport : MonoBehaviour {
                             case ENEMYBASIC:
                                 Instantiate(basicEnemyPrefab, tempSprite.transform.position, Quaternion.identity);
                                 Destroy(tempSprite);
+                                break;
+                            case OBJECTIVE:
+                                Debug.Log("Spawned objective.");
+                                tempSprite.tag = "Objective";
+                                BoxCollider2D objectiveCol = tempSprite.AddComponent<BoxCollider2D>();
+                                objectiveCol.isTrigger = true;
                                 break;
                             default:
                                 BoxCollider2D defaultBoxCol = tempSprite.AddComponent<BoxCollider2D>();

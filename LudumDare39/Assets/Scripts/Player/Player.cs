@@ -21,7 +21,9 @@ public class Player : MonoBehaviour {
     public GameObject sword;
     public float speed = 2f;
     public float hurtAgainDelay = 1f; //Seconds
-    public float hitForce = 100;
+    public float hitForce = 100f;
+    public GameObject winMenu;
+    public GameObject looseMenu;
 
     [Header("Audio Settings")]
     public AudioClip hurtClip;
@@ -139,6 +141,10 @@ public class Player : MonoBehaviour {
                 audioSource.clip = hurtClip;
                 audioSource.Play();
                 health.Hurt(other.GetComponent<Enemy>().attackDamage);
+                if(health.health <= 0)
+                {
+                    looseMenu.SetActive(true);
+                }
                 canGetHurt = false;
                 Invoke("ResetHurt", hurtAgainDelay);
                 playerAnimator.SetTrigger("Hurt");
@@ -146,6 +152,11 @@ public class Player : MonoBehaviour {
                 direction = direction.normalized;
                 GetComponent<Rigidbody2D>().AddForce(direction * hitForce);
             }
+        }
+        if(other.tag == "Objective")
+        {
+            Time.timeScale = 0;
+            winMenu.SetActive(true);
         }
     }
 
